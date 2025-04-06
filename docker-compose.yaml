@@ -1,0 +1,21 @@
+services:
+  clickhouse:
+    build: clickhouse:latest
+    ports:
+      - 8000:8000
+    networks:
+      - dev
+  redis:
+    networks:
+      - dev
+  rabbit:
+    networks:
+      - dev
+  app:
+    networks:
+      - dev
+
+volumes:
+
+networks:
+  dev:
