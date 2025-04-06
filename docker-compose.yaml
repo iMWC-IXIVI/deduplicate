@@ -1,21 +1,36 @@
 services:
   clickhouse:
-    build: clickhouse:latest
+    image: clickhouse/clickhouse-server:latest
+    container_name: clickhouse
+    volumes:
+      - ch_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
     ports:
-      - 8000:8000
+      - "8123:8123"
+      - "9000:9000"
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: ${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT}
     networks:
       - dev
-  redis:
-    networks:
-      - dev
-  rabbit:
-    networks:
-      - dev
-  app:
-    networks:
-      - dev
+#  redis:
+#    networks:
+#      - dev
+#  rabbit:
+#    networks:
+#      - dev
+#  app:
+#    networks:
+#      - dev
 
 volumes:
+  ch_data:
 
 networks:
   dev:
