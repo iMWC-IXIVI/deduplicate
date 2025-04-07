@@ -19,9 +19,16 @@ services:
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: ${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT}
     networks:
       - dev
-#  redis:
-#    networks:
-#      - dev
+  redis:
+    image: redis:latest
+    container_name: redis
+    volumes:
+      - redis:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - dev
 #  rabbit:
 #    networks:
 #      - dev
@@ -31,6 +38,8 @@ services:
 
 volumes:
   ch_data:
+
+  redis:
 
 networks:
   dev:
