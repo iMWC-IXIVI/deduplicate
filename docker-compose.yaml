@@ -29,9 +29,21 @@ services:
     restart: unless-stopped
     networks:
       - dev
-#  rabbit:
-#    networks:
-#      - dev
+  rabbit:
+    image: rabbitmq:alpine
+    container_name: rabbitmq
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_ENABLED_PLUGINS: ${RABBITMQ_ENABLED_PLUGINS}
+    networks:
+      - dev
 #  app:
 #    networks:
 #      - dev
@@ -40,6 +52,8 @@ volumes:
   ch_data:
 
   redis:
+
+  rabbitmq:
 
 networks:
   dev:
