@@ -44,9 +44,26 @@ services:
       RABBITMQ_ENABLED_PLUGINS: ${RABBITMQ_ENABLED_PLUGINS}
     networks:
       - dev
-#  app:
-#    networks:
-#      - dev
+  app:
+    build: .
+    container_name: fastapi
+    volumes:
+      - ./app:/usr/src/app
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: bash -c "python main.py"
+    depends_on:
+      clickhouse:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbit:
+        condition: service_started
+    networks:
+      - dev
 
 volumes:
   ch_data:
