@@ -58,9 +58,3 @@ class MiniORM:
         except Exception as e:
             print(f'Исключение {e}')
             return False
-
-
-test = MiniORM(username='admin', password='admin', database='deduplicate')
-test.connect()
-print(test.test_connection())
-print(test.insert('users', ['name', 'age', 'surname'], [('Aboba', 32, 'Abobovih'), ('Bboba', 332, 'BAbobovih')]))
