@@ -11,7 +11,7 @@ migration_file = Path(__file__).resolve().parent.parent/'migrations'
 
 
 def get_connection():
-    connect = MiniORM(host=settings.HOST, username=settings.USERNAME, password=settings.PASSWORD, database=settings.DATABASE)
+    connect = MiniORM(port=settings.PORT, host=settings.HOST, username=settings.USERNAME, password=settings.PASSWORD, database=settings.DATABASE)
     connect.connect()
 
     return connect
