@@ -13,5 +13,8 @@ class Settings:
     USERNAME = os.getenv('CLICKHOUSE_USER')
     DATABASE = os.getenv('CLICKHOUSE_DB')
 
+    RABBITMQ_URL = os.getenv('RABBITMQ_URL')
+    REDIS_URL = os.getenv('REDIS_URL')
+
 
 settings = Settings()
