@@ -17,6 +17,12 @@ services:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
       CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: ${CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT}
+    healthcheck:
+      test: ["CMD", "clickhouse-client", "--host", "${CLICKHOUSE_HOST}", "--query", "SELECT 1"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - dev
   redis:
@@ -27,6 +33,12 @@ services:
     ports:
       - "6379:6379"
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - dev
   rabbit:
@@ -42,6 +54,12 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       RABBITMQ_ENABLED_PLUGINS: ${RABBITMQ_ENABLED_PLUGINS}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      start_period: 10s
+      interval: 10s
+      timeout: 3s
+      retries: 3
     networks:
       - dev
   app:
@@ -54,14 +72,14 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    command: bash -c "python main.py"
+    command: bash -c "python db/orm/migration.py && python main.py"
     depends_on:
       clickhouse:
-        condition: service_started
+        condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       rabbit:
-        condition: service_started
+        condition: service_healthy
     networks:
       - dev
 
