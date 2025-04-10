@@ -7,6 +7,6 @@ router = APIRouter(prefix='/deduplicate')
 
 
 @router.get('/')
-async def example():
-    app.send_task('celery_app.tasks.first_example.example', args=[3, 4])
+async def example(data: dict):
+    app.send_task('celery_app.tasks.deduplicate.deduplicate', args=[data, ])
     return {'message': 'ok'}

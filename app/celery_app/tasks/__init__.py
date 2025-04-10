@@ -1,1 +1,1 @@
-from .first_example import example
+from .deduplicate import deduplicate
