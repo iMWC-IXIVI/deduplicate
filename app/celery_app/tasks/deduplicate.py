@@ -18,10 +18,14 @@ connect = get_connection()
 def deduplicate(data: dict):
     data_string = json.dumps(data).encode()
     data_hash = hashlib.blake2s(data_string).hexdigest()
+
+    if redis_client.exists(data_hash):
+        return 'Duplicate'
+
     query_data = connect.select(['hash'], 'original', {'hash': data_hash})
 
-    if redis_client.exists(data_hash) or query_data:
-        return 'Duplicate'
+    if query_data:
+        return 'Deduplicate'
 
     redis_client.set(data_hash, 'hash')
     redis_client.expire(data_hash, 60)
