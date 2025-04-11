@@ -1,1 +1,1 @@
-from .deduplicate import router
+from .event import router
