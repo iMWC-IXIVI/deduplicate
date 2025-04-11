@@ -5,6 +5,7 @@ from deduplicate import Deduplicate
 
 @app.task
 def deduplicate(data: dict):
+    """Задача по выявлению дубликатов"""
     dedup = Deduplicate(data)
     result = dedup.run()
 
