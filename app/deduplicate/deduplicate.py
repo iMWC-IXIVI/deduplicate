@@ -26,7 +26,7 @@ class Deduplicate:
     attributes:
         data: dict - JSON данные о действии пользователя\n
     methods:
-        run() - Отбор дублирующих данных\n
+        run() -> bool - Отбор дублирующих данных\n
     __methods:
         __get_hash() -> None - Получение хэша данных\n
         __check_redis() -> str - Проверка данных внутри redis\n
