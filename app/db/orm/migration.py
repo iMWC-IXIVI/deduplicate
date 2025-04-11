@@ -11,18 +11,21 @@ migration_file = Path(__file__).resolve().parent.parent/'migrations'
 
 
 def get_connection() -> MiniORM:
+    """Подключение к базе данных"""
     connect = MiniORM(port=settings.PORT, host=settings.HOST, username=settings.USERNAME, password=settings.PASSWORD, database=settings.DATABASE)
     connect.connect()
 
     return connect
 
 
-def init_migration():
+def init_migration() -> None:
+    """Инициализация первой таблицы (migration)"""
     with open(migration_file/'0001_init_migration.sql', 'r', encoding='utf-8') as file:
         get_connection().connection.execute(file.read())
 
 
-def run_migration():
+def run_migration() -> None:
+    """Применение всех миграций кроме init_migration"""
     connect = get_connection()
     dir_files = sorted([file.name for file in migration_file.glob('*.sql') if file.name != '0001_init_migration.sql'])
 
@@ -39,5 +42,7 @@ def run_migration():
 
 
 if __name__ == '__main__':
+    # TODO Не сделан откат миграций, в будущих реализаций - ДОБАВИТЬ!!!
+    # TODO Рассмотреть тему с ATOMIC REQUESTS в случае возбуждения исключений!!!
     init_migration()
     run_migration()
