@@ -4,13 +4,13 @@ import datetime
 from pathlib import Path
 
 from core import settings
-from mini_orm import MiniORM
+from db.orm import MiniORM
 
 
 migration_file = Path(__file__).resolve().parent.parent/'migrations'
 
 
-def get_connection():
+def get_connection() -> MiniORM:
     connect = MiniORM(port=settings.PORT, host=settings.HOST, username=settings.USERNAME, password=settings.PASSWORD, database=settings.DATABASE)
     connect.connect()
 
