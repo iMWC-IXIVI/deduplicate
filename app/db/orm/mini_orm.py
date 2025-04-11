@@ -4,6 +4,30 @@ from clickhouse_driver import Client
 
 
 class MiniORM:
+    """
+    Класс-реализация минималистичная orm система для Clickhouse\n
+    MiniORM:\n
+    attributes:
+        host: str - Хост clickhouse (имя сервиса в docker"e): default localhost\n
+        port: int - Порт clickhouse: default 9000\n
+        database: str - Название базы данных в clickhouse: default default\n
+        username: str - Логин пользователя (clickhouse): default default\n
+        password: str - Пароль пользователя (clickhouse): default ""\n
+        connection: str - Кэш-подключение к базе данных (clickhouse): default None\n
+    methods:
+        insert(table, columns, values) -> None: Метод по добавлении записи в бд
+            attributes:
+                table: str - Название таблицы в бд (clickhouse)\n
+                columns: List[str] - Название колонок в бд (clickhouse)\n
+                values: List[Tuple[Any, ...]] - Значения колонок в бд (clickhouse)\n
+        select(columns, table, condition=None) -> Optional[List[Tuple[Any, ...]]]: Метод по получении данных
+            attributes:
+                columns: List[str] - Названия колонок в бд (clickhouse)\n
+                table: str - Название таблицы в бд (clickhouse)\n
+                condition: Optional[Dict[str, str]] = None - Условия поиска\n
+        connect() -> Client - Метод по подключению к бд (clickhouse)\n
+        test_connection() -> bool - Подключение-тест к ьд (clickhouse)\n
+    """
     def __init__(self, **kwargs) -> None:
         self.host: str = kwargs.get('host', 'localhost')
         self.port: int = kwargs.get('port', 9000)
@@ -14,7 +38,6 @@ class MiniORM:
         self.connection: Optional[Client] = None
 
     def insert(self, table: str, columns: List[str], values: List[Tuple[Any, ...]]):
-        """Создание записи в бд"""
         if not self.test_connection():
             return
 
@@ -26,7 +49,6 @@ class MiniORM:
         self.connection.execute(query=sql, params=values)
 
     def select(self, columns: List[str], table: str, condition: Optional[Dict[str, str]] = None):
-        """Получение данных из бд"""
         if not self.test_connection():
             return
 

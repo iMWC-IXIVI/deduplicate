@@ -3,10 +3,11 @@ from fastapi import APIRouter
 from celery_app import app
 
 
-router = APIRouter(prefix='/deduplicate')
+router = APIRouter(prefix='/service-event')
 
 
 @router.get('/')
-async def example(data: dict):
+async def event(data: dict):
+    """Обработка событий"""
     app.send_task('celery_app.tasks.deduplicate.deduplicate', args=[data, ])
     return {'message': 'ok'}
