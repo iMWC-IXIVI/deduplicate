@@ -4,6 +4,7 @@ import hashlib
 import redis
 
 from datetime import datetime
+from typing import Optional
 
 from core import settings
 from db.orm import get_connection
@@ -26,7 +27,7 @@ class Deduplicate:
     attributes:
         data: dict - JSON данные о действии пользователя\n
     methods:
-        run() -> bool - Отбор дублирующих данных\n
+        run() -> Optional[bool] - Отбор дублирующих данных\n
     __methods:
         __get_hash() -> None - Получение хэша данных\n
         __check_redis() -> str - Проверка данных внутри redis\n
@@ -44,17 +45,38 @@ class Deduplicate:
     def __init__(self, data: dict) -> None:
         self.data: dict = data
 
-    def run(self):
-        self.__get_hash()
+    def run(self) -> Optional[bool]:
+        try:
+            self.__get_hash()
+        except Exception as e:
+            print(f'Исключение формирование хэш данных - {e}')
+            return
 
-        if self.__check_redis() == 'Duplicate':
-            return False
+        try:
+            if self.__check_redis() == 'Duplicate':
+                return False
+        except Exception as e:
+            print(f'Исключение во время проверки внутри redis - {e}')
+            return
 
-        if self.__check_db() == 'Duplicate':
-            return False
+        try:
+            if self.__check_db() == 'Duplicate':
+                return False
+        except Exception as e:
+            print(f'Исключение во время проверки внутри бд clickhouse - {e}')
+            return
 
-        self.__save_to_redis()
-        self.__save_to_db()
+        try:
+            self.__save_to_redis()
+        except Exception as e:
+            print(f'Исключение во время сохранение хэша в redis - {e}')
+            return
+
+        try:
+            self.__save_to_db()
+        except Exception as e:
+            print(f'Исключение во время сохранения данных в бд clickhouse - {e}')
+            return
 
         return True
 
