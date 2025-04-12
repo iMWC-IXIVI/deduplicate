@@ -6,7 +6,7 @@ import redis
 from datetime import datetime
 from typing import Optional
 
-from core import settings
+from core import settings, log
 from db.orm import get_connection
 
 
@@ -46,37 +46,52 @@ class Deduplicate:
         self.data: dict = data
 
     def run(self) -> Optional[bool]:
+        log.info_message('Начинается проверка на дублика')
         try:
+            log.info_message('Создание хэша данных')
             self.__get_hash()
+            log.info_message('Хэш успешно создан')
         except Exception as e:
-            print(f'Исключение формирование хэш данных - {e}')
+            log.error_message(f'Исключение формирование хэш данных - {e}')
             return
 
         try:
+            log.info_message('Проверка хэша в redis')
             if self.__check_redis() == 'Duplicate':
+                log.warning_message(f'Дубликат найден, хэш - {self.__hash_data}')
                 return False
+            log.info_message('Проверка успешно пройдена')
         except Exception as e:
-            print(f'Исключение во время проверки внутри redis - {e}')
+            log.error_message(f'Исключение во время проверки внутри redis - {e}')
             return
 
         try:
+            log.info_message('Проверка хэша в clickhouse (бд)')
             if self.__check_db() == 'Duplicate':
+                log.warning_message(f'Дублика найден, хэш - {self.__hash_data}')
                 return False
+            log.info_message('Проверка успешно пройдена')
         except Exception as e:
-            print(f'Исключение во время проверки внутри бд clickhouse - {e}')
+            log.error_message(f'Исключение во время проверки внутри бд clickhouse - {e}')
             return
 
         try:
+            log.info_message('Начинается сохранение данных в redis')
             self.__save_to_redis()
+            log.info_message('Данные успешно сохранены в redis')
         except Exception as e:
-            print(f'Исключение во время сохранение хэша в redis - {e}')
+            log.error_message(f'Исключение во время сохранение хэша в redis - {e}')
             return
 
         try:
+            log.info_message('Начинается сохранение данных в clickhouse (бд)')
             self.__save_to_db()
+            log.info_message('Данные успешно сохранены в clickhouse (бд)')
         except Exception as e:
-            print(f'Исключение во время сохранения данных в бд clickhouse - {e}')
+            log.error_message(f'Исключение во время сохранения данных в бд clickhouse - {e}')
             return
+
+        log.info_message('Данные успешно проверены на дубликат. Дубликат не найден')
 
         return True
 
