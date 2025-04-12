@@ -4,12 +4,11 @@ import datetime
 from pathlib import Path
 from typing import Optional
 
-from core import settings, LoggingService
+from core import settings, log
 from db.orm import MiniORM
 
 
 migration_file = Path(__file__).resolve().parent.parent/'migrations'
-log = LoggingService()
 
 
 def get_connection() -> Optional[MiniORM]:

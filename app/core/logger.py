@@ -74,3 +74,6 @@ class LoggingService:
     def error_message(self, message):
         self.__console_logger.error(msg=message)
         self.__file_logger.error(msg=message)
+
+
+log = LoggingService()

@@ -1,2 +1,2 @@
 from .config import settings
-from .logger import LoggingService
+from .logger import log
