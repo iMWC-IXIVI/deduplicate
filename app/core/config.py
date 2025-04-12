@@ -1,5 +1,7 @@
 import os
 
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 
@@ -31,6 +33,8 @@ class Settings:
     # REDIS ENVIRONMENT
     REDIS_HOST = os.getenv('REDIS_HOST')
     REDIS_PORT = os.getenv('REDIS_PORT')
+    # APP ENVIRONMENT
+    BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 settings = Settings()
