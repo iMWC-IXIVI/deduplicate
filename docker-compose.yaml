@@ -72,7 +72,7 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    command: bash -c "python db/orm/migration.py && python main.py"
+    command: bash -c "python db/orm/migration.py && uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4 --log-level info --reload"
     depends_on:
       clickhouse:
         condition: service_healthy
