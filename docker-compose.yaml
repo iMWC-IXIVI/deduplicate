@@ -9,8 +9,8 @@ services:
         soft: 262144
         hard: 262144
     ports:
-      - "8123:8123"
-      - "9000:9000"
+      - "${CONNECT_TO_CLICKHOUSE_HTTP_PORT}:${CLICKHOUSE_HTTP_PORT}" # HTTP
+      - "${CONNECT_TO_CLICKHOUSE_TCP_PORT}:${CLICKHOUSE_TCP_PORT}" # TCP
     restart: unless-stopped
     environment:
       CLICKHOUSE_DB: ${CLICKHOUSE_DB}
@@ -31,7 +31,7 @@ services:
     volumes:
       - redis:/data
     ports:
-      - "6379:6379"
+      - "${CONNECT_TO_REDIS_PORT}:${REDIS_PORT}"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -47,8 +47,8 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - "${CONNECT_TO_RABBITMQ_HTTP_PORT}:${RABBITMQ_HTTP_PORT}" # HTTP
+      - "${CONNECT_TO_RABBITMQ_AMQP_PORT}:${RABBITMQ_AMQP_PORT}" # AMQP
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
@@ -68,7 +68,7 @@ services:
     volumes:
       - ./app:/usr/src/app
     ports:
-      - "8000:8000"
+      - "${CONNECT_TO_PORT}:${PORT}"
     restart: unless-stopped
     env_file:
       - .env

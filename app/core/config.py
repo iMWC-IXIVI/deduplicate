@@ -23,7 +23,7 @@ class Settings:
     """
     # DATABASE ENVIRONMENT
     HOST = os.getenv('CLICKHOUSE_HOST')
-    PORT = os.getenv('CLICKHOUSE_PORT')
+    PORT = os.getenv('CLICKHOUSE_TCP_PORT')
     PASSWORD = os.getenv('CLICKHOUSE_PASSWORD')
     USERNAME = os.getenv('CLICKHOUSE_USER')
     DATABASE = os.getenv('CLICKHOUSE_DB')
