@@ -87,6 +87,7 @@ services:
     container_name: celery_worker
     volumes:
       - ./app:/usr/src/app
+    restart: unless-stopped
     env_file:
       - .env
     command: bash -c "celery -A celery_app.celery_app worker --loglevel=info"
@@ -97,7 +98,22 @@ services:
         condition: service_healthy
     networks:
       - dev
-
+  celery-beat:
+    build: .
+    container_name: celery_beat
+    volumes:
+      - ./app:/usr/src/app
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: bash -c "celery -A celery_app.celery_app beat --loglevel=info --schedule /usr/src/app/celerybeat_data/celerybeat-schedule"
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbit:
+        condition: service_healthy
+    networks:
+      - dev
 volumes:
   ch_data:
 

@@ -3,3 +3,4 @@
 /.env
 **/__pycache__/
 /app/loggers/*
+/app/celerybeat_data/*
