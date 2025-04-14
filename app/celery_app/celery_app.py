@@ -22,6 +22,6 @@ app.conf.update(
 app.conf.beat_schedule = {
     'say_hello_message': {
         'task': 'celery_app.beat.backup_data.say_hello',
-        'schedule': timedelta(seconds=5)
+        'schedule': timedelta(days=5)
     },
 }
