@@ -5,7 +5,7 @@ from db.orm import MiniORM
 from core import settings, log
 
 
-def get_data(connect, dt_now):
+def get_data(connect: MiniORM, dt_now: datetime):
     yield from connect.connection.execute(f'SELECT raw_data FROM original WHERE created < \'{dt_now.strftime("%Y-%m-%d %H:%M:%S")}\'')
 
 
