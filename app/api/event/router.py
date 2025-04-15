@@ -10,5 +10,5 @@ router = APIRouter(prefix='/service-event')
 async def event(request: requests.Request):
     """Обработка событий"""
     data = await request.json()
-    app.send_task('celery_app.tasks.deduplicate.deduplicate', args=[data, ])
+    app.send_task('celery_app.worker.deduplicate.deduplicate', args=[data, ])
     return {'message': 'ok'}
