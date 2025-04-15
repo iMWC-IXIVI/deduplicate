@@ -15,7 +15,7 @@ def get_data():
 
 
 @app.task()
-def say_hello():
+def backup_data():
     with open(settings.BASE_DIR/'backups'/f'{datetime.now().date()}.log', 'w', encoding='utf-8') as file:
         for data in get_data():
             file.write(f'{data}\n')
