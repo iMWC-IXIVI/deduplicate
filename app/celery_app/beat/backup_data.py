@@ -11,8 +11,7 @@ dt_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_data():
-    datas = connect.connection.execute(f'SELECT raw_data FROM original WHERE created < \'{dt_now}\'')
-    yield from datas
+    yield from connect.connection.execute(f'SELECT raw_data FROM original WHERE created < \'{dt_now}\'')
 
 
 @app.task()
