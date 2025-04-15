@@ -2,6 +2,8 @@ from typing import List, Tuple, Any, Dict, Optional
 
 from clickhouse_driver import Client
 
+from core import settings
+
 
 class MiniORM:
     """
@@ -29,11 +31,11 @@ class MiniORM:
         test_connection() -> bool - Подключение-тест к ьд (clickhouse)\n
     """
     def __init__(self, **kwargs) -> None:
-        self.host: str = kwargs.get('host', 'localhost')
-        self.port: int = kwargs.get('port', 9000)
-        self.database: str = kwargs.get('database', 'default')
-        self.username: str = kwargs.get('username', 'default')
-        self.password: str = kwargs.get('password', '')
+        self.host: str = kwargs.get('host', settings.HOST)
+        self.port: int = kwargs.get('port', settings.PORT)
+        self.database: str = kwargs.get('database', settings.DATABASE)
+        self.username: str = kwargs.get('username', settings.USERNAME)
+        self.password: str = kwargs.get('password', settings.PASSWORD)
 
         self.connection: Optional[Client] = None
 
