@@ -25,6 +25,7 @@
 * __Клонирование проекта__ - ```git clone https://github.com/iMWC-IXIVI/deduplicate.git```
 * __Необходимо перейти в директорию с проектом__ - ```cd deduplicate```
 * __Копирование .env файла (необходимо настроить)__ - ```copy .env_example .env```
+* __Создание необходимых папок для проекта__ - ```mkdir loggers celerybeat_data backups```
 * __Создание виртуального окружения__ - ```python -m venv venv```
 * __Активация виртуального окружения__ - ```venv/Scripts/activate```
 * __Деактивация виртуального окружения (опционально)__ - ```deactivate```

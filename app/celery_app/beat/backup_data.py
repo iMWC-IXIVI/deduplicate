@@ -32,7 +32,7 @@ def backup_data():
 
     try:
         log.info_message('Начинается удаление данных из clickhouse')
-        connect.connection.execute(f'DELETE FROM original WHERE created < \'{dt_now.strftime("%Y-%m-%d %H:%M:%S")}\'')
+        connect.connection.execute(f'ALTER TABLE original DELETE WHERE created < \'{dt_now.strftime("%Y-%m-%d %H:%M:%S")}\'')
         connect.connection.execute(f'OPTIMIZE TABLE original FINAL')
         log.info_message('Завершение удаления данных из clickhouse')
     except Exception as e:
