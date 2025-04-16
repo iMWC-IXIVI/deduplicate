@@ -22,11 +22,12 @@ class MiniORM:
                 table: str - Название таблицы в бд (clickhouse)\n
                 columns: List[str] - Название колонок в бд (clickhouse)\n
                 values: List[Tuple[Any, ...]] - Значения колонок в бд (clickhouse)\n
-        select(columns, table, condition=None) -> Optional[List[Tuple[Any, ...]]]: Метод по получении данных
+        select(columns, table, condition=None, separation=AND) -> Optional[List[Tuple[Any, ...]]]: Метод по получении данных
             attributes:
                 columns: List[str] - Названия колонок в бд (clickhouse)\n
                 table: str - Название таблицы в бд (clickhouse)\n
-                condition: Optional[Dict[str, str]] = None - Условия поиска\n
+                condition: Optional[List[Tuple[str, str, str]]] = None - Условия поиска\n
+                separation: str = AND - Соединитель\n
         connect() -> Client - Метод по подключению к бд (clickhouse)\n
         test_connection() -> bool - Подключение-тест к ьд (clickhouse)\n
     """
@@ -50,24 +51,7 @@ class MiniORM:
 
         self.connection.execute(query=sql, params=values)
 
-    def select(self, columns: List[str], table: str, condition: Optional[Dict[str, str]] = None):
-        if not self.test_connection():
-            return
-
-        safe_columns = [f'`{column}`' for column in columns]
-
-        safe_table = f'`{table}`'
-
-        query_sql = f'SELECT {", ".join(safe_columns)} FROM {safe_table}'
-
-        if condition:
-            safe_condition = [f'`{key}` = %({key})s' for key in condition]
-            query_sql += f' WHERE {" AND ".join(safe_condition)}'
-
-        data = self.connection.execute(query=query_sql, params=condition)
-        return data
-
-    def __future_select(
+    def select(
             self,
             columns: List[str], table: str,
             condition: Optional[List[Tuple[str, str, str]]] = None,
