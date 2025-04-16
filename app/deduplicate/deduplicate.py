@@ -96,7 +96,7 @@ class Deduplicate:
         return True
 
     def __get_hash(self) -> None:
-        self.__byte_string: bytes = json.dumps(self.data).encode()
+        self.__byte_string: bytes = json.dumps(self.data, sort_keys=True).encode()
         self.__hash_data: str = hashlib.blake2s(self.__byte_string).hexdigest()
 
     def __check_redis(self) -> str:
