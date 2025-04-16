@@ -15,7 +15,7 @@ def get_connection() -> Optional[MiniORM]:
     """Подключение к базе данных"""
     try:
         log.info_message('Начало подключения к БД')
-        connect = MiniORM(port=settings.PORT, host=settings.HOST, username=settings.USERNAME, password=settings.PASSWORD, database=settings.DATABASE)
+        connect = MiniORM()
         connect.connect()
         log.info_message('Успешное подключение к БД')
         return connect
@@ -43,7 +43,7 @@ def run_migration() -> None:
 
         try:
             log.info_message('Операция SELECT в таблицу migration началась')
-            data = connect.select(['name_migration'], 'migrations', {'name_migration': f'{file_name}'})
+            data = connect.select(['name_migration'], 'migrations', [('name_migration', '=', f'{file_name}')])
             log.info_message(f'Операция SELECT завершилась успешно, данные: {data}')
         except Exception as e:
             log.error_message(f'MiniORM select не был выполнен - {e}')
@@ -72,8 +72,6 @@ def run_migration() -> None:
 
 
 if __name__ == '__main__':
-    # TODO Не сделан откат миграций, в будущих реализаций - ДОБАВИТЬ!!!
-    # TODO Рассмотреть тему с ATOMIC REQUESTS в случае возбуждения исключений!!!
     init_migration()
     run_migration()
     log.info_message('Успешное завершение всех миграций')

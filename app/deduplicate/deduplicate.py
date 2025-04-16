@@ -107,7 +107,7 @@ class Deduplicate:
         sql_data = self.DB_CONNECT.select(
             self.S_COLUMNS_NAME,
             self.TABLE_NAME,
-            {self.S_COLUMNS_NAME[0]: self.__hash_data}
+            [(self.S_COLUMNS_NAME[0], '=', self.__hash_data)]
         )
         if sql_data:
             return 'Duplicate'

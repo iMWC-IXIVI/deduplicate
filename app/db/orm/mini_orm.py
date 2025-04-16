@@ -2,7 +2,7 @@ from typing import List, Tuple, Any, Dict, Optional
 
 from clickhouse_driver import Client
 
-from core import settings
+from core import settings, log
 
 
 class MiniORM:
@@ -22,11 +22,12 @@ class MiniORM:
                 table: str - Название таблицы в бд (clickhouse)\n
                 columns: List[str] - Название колонок в бд (clickhouse)\n
                 values: List[Tuple[Any, ...]] - Значения колонок в бд (clickhouse)\n
-        select(columns, table, condition=None) -> Optional[List[Tuple[Any, ...]]]: Метод по получении данных
+        select(columns, table, condition=None, separation=AND) -> Optional[List[Tuple[Any, ...]]]: Метод по получении данных
             attributes:
                 columns: List[str] - Названия колонок в бд (clickhouse)\n
                 table: str - Название таблицы в бд (clickhouse)\n
-                condition: Optional[Dict[str, str]] = None - Условия поиска\n
+                condition: Optional[List[Tuple[str, str, str]]] = None - Условия поиска\n
+                separation: str = AND - Соединитель\n
         connect() -> Client - Метод по подключению к бд (clickhouse)\n
         test_connection() -> bool - Подключение-тест к ьд (clickhouse)\n
     """
@@ -50,21 +51,37 @@ class MiniORM:
 
         self.connection.execute(query=sql, params=values)
 
-    def select(self, columns: List[str], table: str, condition: Optional[Dict[str, str]] = None):
+    def select(
+            self,
+            columns: List[str], table: str,
+            condition: Optional[List[Tuple[str, str, str]]] = None,
+            separation: str = 'AND'
+    ):
         if not self.test_connection():
             return
 
-        safe_columns = [f'`{column}`' for column in columns]
+        if separation not in {'AND', 'OR'}:
+            raise ValueError('Данная операция не возможна')
 
+        safe_columns = [f'`{column}`' for column in columns]
         safe_table = f'`{table}`'
+        separation = f' {separation} '
 
         query_sql = f'SELECT {", ".join(safe_columns)} FROM {safe_table}'
 
+        params = {}
+        query_list = []
         if condition:
-            safe_condition = [f'`{key}` = %({key})s' for key in condition]
-            query_sql += f' WHERE {" AND ".join(safe_condition)}'
+            for key, sep_condition, value in condition:
+                if sep_condition not in ['=', '!=', '<>', '>', '<', '>=', '<=', '<=>']:
+                    raise ValueError('Данный тип операций не поддерживается')
+                query_list.append(f'`{key}` {sep_condition} %({key})s')
+                params.update({key: value})
 
-        data = self.connection.execute(query=query_sql, params=condition)
+        query_sql += f' WHERE {separation.join(query_list)}'
+
+        data = self.connection.execute(query=query_sql, params=params)
+
         return data
 
     def connect(self):
@@ -80,5 +97,5 @@ class MiniORM:
             self.connect().execute('SELECT 1')
             return True
         except Exception as e:
-            print(f'Исключение {e}')
+            log.error_message(f'Исключение {e}')
             return False
