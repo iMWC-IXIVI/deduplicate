@@ -67,6 +67,36 @@ class MiniORM:
         data = self.connection.execute(query=query_sql, params=condition)
         return data
 
+    def __future_select(
+            self,
+            columns: List[str], table: str,
+            condition: Optional[List[Tuple[str, str, str]]] = None,
+            separation: str = 'AND'
+    ):
+        if not self.test_connection():
+            return
+
+        safe_columns = [f'`{column}`' for column in columns]
+        safe_table = f'`{table}`'
+        separation = f' {separation} '
+
+        query_sql = f'SELECT {", ".join(safe_columns)} FROM {safe_table}'
+
+        params = {}
+        query_list = []
+        if condition:
+            for key, sep_condition, value in condition:
+                if sep_condition not in ['=', '!=', '<>', '>', '<', '>=', '<=', '<=>']:
+                    raise ValueError('Данный тип операций не поддерживается')
+                query_list.append(f'`{key}` {sep_condition} %({key})s')
+                params.update({key: value})
+
+        query_sql += f' WHERE {separation.join(query_list)}'
+
+        data = self.connection.execute(query=query_sql, params=params)
+
+        return data
+
     def connect(self):
         """Подключение к бд Clickhouse"""
         if not self.connection:
