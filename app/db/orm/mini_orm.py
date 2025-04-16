@@ -2,7 +2,7 @@ from typing import List, Tuple, Any, Dict, Optional
 
 from clickhouse_driver import Client
 
-from core import settings
+from core import settings, log
 
 
 class MiniORM:
@@ -113,5 +113,5 @@ class MiniORM:
             self.connect().execute('SELECT 1')
             return True
         except Exception as e:
-            print(f'Исключение {e}')
+            log.error_message(f'Исключение {e}')
             return False
