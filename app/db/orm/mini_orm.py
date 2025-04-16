@@ -76,6 +76,9 @@ class MiniORM:
         if not self.test_connection():
             return
 
+        if separation not in {'AND', 'OR'}:
+            raise ValueError('Данная операция не возможна')
+
         safe_columns = [f'`{column}`' for column in columns]
         safe_table = f'`{table}`'
         separation = f' {separation} '
