@@ -6,3 +6,5 @@
 /app/loggers/*
 /app/celerybeat_data/*
 /app/backups/*
+
+/hard_test/datas/*

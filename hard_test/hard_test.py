@@ -1,21 +1,18 @@
-from locust import HttpUser, constant, task, between
+import json
+import random
+from locust import HttpUser, task, between
 
 
-data = {
-    'user': 'some_data',
-    'user2': 'some_data',
-    'user3': 'some_data',
-    'user4': 'some_data',
-    'user5': 'some_data',
-    'user6': 'some_data',
-    'user7': 'some_data',
-    'user8': 'some_data',
-    'user9': 'some_data',
-    'user10': 'some_data',
-    'user11': 'some_data',
-    'user12': 'some_data',
-    'user13': 'some_data',
-}
+with open('hard_test/datas/datas.json', 'r', encoding='utf-8') as f:
+    all_data = json.load(f)
+
+
+def random_data():
+    while True:
+        yield random.choice(all_data)
+
+
+data_gen = random_data()
 
 
 class HardTest(HttpUser):
@@ -23,4 +20,5 @@ class HardTest(HttpUser):
 
     @task
     def send_event(self):
+        data = next(data_gen)
         self.client.post('/service-event/', json=data)
