@@ -55,15 +55,6 @@ class Deduplicate:
             log.error_message(f'Исключение формирование хэш данных - {e}')
             return
 
-        # try:
-        #     log.info_message('Проверка хэша в redis')
-        #     if self.__check_redis() == 'Duplicate':
-        #         log.warning_message(f'Дубликат найден, хэш - {self.__hash_data}')
-        #         return False
-        #     log.info_message('Проверка успешно пройдена')
-        # except Exception as e:
-        #     log.error_message(f'Исключение во время проверки внутри redis - {e}')
-        #     return
         try:
             log.info_message('Манипуляция с redis началась')
             if self.__manipulation_redis() == 'Duplicate':
@@ -84,14 +75,6 @@ class Deduplicate:
             log.error_message(f'Исключение во время проверки внутри бд clickhouse - {e}')
             return
 
-        # try:
-        #     log.info_message('Начинается сохранение данных в redis')
-        #     self.__save_to_redis()
-        #     log.info_message('Данные успешно сохранены в redis')
-        # except Exception as e:
-        #     log.error_message(f'Исключение во время сохранение хэша в redis - {e}')
-        #     return
-
         try:
             log.info_message('Начинается сохранение данных в clickhouse (бд)')
             self.__save_to_db()
@@ -108,10 +91,6 @@ class Deduplicate:
         self.__byte_string: bytes = json.dumps(self.data, sort_keys=True).encode()
         self.__hash_data: str = hashlib.blake2s(self.__byte_string).hexdigest()
 
-    def __check_redis(self) -> str:
-        if self.REDIS_CONNECT.exists(self.__hash_data):
-            return 'Duplicate'
-
     def __manipulation_redis(self) -> str:
         if not self.REDIS_CONNECT.set(self.__hash_data, 'hash', nx=True, ex=60):
             return 'Duplicate'
@@ -124,10 +103,6 @@ class Deduplicate:
         )
         if sql_data:
             return 'Duplicate'
-
-    def __save_to_redis(self) -> None:
-        self.REDIS_CONNECT.set(self.__hash_data, 'hash')
-        self.REDIS_CONNECT.expire(self.__hash_data, self.REDIS_TTL)
 
     def __save_to_db(self) -> None:
         uuid_data = uuid.uuid4()
