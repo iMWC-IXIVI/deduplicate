@@ -33,6 +33,7 @@
 * __Запуск docker compose (Система docker должна быть установлена)__ - ```docker compose up --build```
 * __Просмотр файловой структуры docker'a (опционально)__ - ```docker exec -it <container_name> bash```
 * __Исполнение команды docker сервиса (опционально)__ - ```docker exec -it <container_name> <command>```
+* __Для нагрузочного тестирования на ОС Windows добавить библиотеку в req.txt__ - ```pywin32==310```
 
 ___
 
