@@ -26,5 +26,9 @@ class BloomFilter:
         hash_value = blake2s((data + str(i)).encode()).digest()
         return int.from_bytes(hash_value, 'little') % ceil(self.m)
 
-
-bloom = BloomFilter(1_000_000, 0.01)
+    def is_contains(self, data: str):
+        for i in range(ceil(self.k)):
+            index = self._get_index(data, i)
+            if not self.array[index]:
+                return False
+        return True
