@@ -5,7 +5,7 @@ from math import log, ceil
 
 from bitarray import bitarray
 
-from validators import SizeValidator, LuckValidator
+from .validators import SizeValidator, LuckValidator
 
 
 class BloomFilter:
