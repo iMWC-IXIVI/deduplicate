@@ -1,4 +1,4 @@
-import datetime
+import json
 
 from hashlib import blake2s
 from math import log, ceil
@@ -20,7 +20,9 @@ class BloomFilter:
         self.array = bitarray(ceil(self.m))
         self.__bits = 0
 
-    def add_item(self, data: str):
+    def add_item(self, data: dict):
+        data = self._get_data(data)
+
         for i in range(ceil(self.k)):
             index = self._get_index(data, i)
             if not self.array[index]:
@@ -30,17 +32,25 @@ class BloomFilter:
         if self.__bits / ceil(self.m) > 0.8:
             self.reset_array()
 
-    def _get_index(self, data: str, i: int):
-        hash_value = blake2s((data + str(i)).encode()).digest()
-        return int.from_bytes(hash_value, 'little') % ceil(self.m)
+    def is_contains(self, data: dict):
+        data = self._get_data(data)
 
-    def is_contains(self, data: str):
         for i in range(ceil(self.k)):
             index = self._get_index(data, i)
+
             if not self.array[index]:
                 return False
+
         return True
 
     def reset_array(self):
         self.array = bitarray(ceil(self.m))
         self.__bits = 0
+
+    def _get_index(self, data: str, i: int):
+        hash_value = blake2s((data + str(i)).encode()).digest()
+        return int.from_bytes(hash_value, 'little') % ceil(self.m)
+
+    @staticmethod
+    def _get_data(data: dict):
+        return json.dumps(data, sort_keys=True)
