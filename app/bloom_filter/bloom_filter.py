@@ -9,6 +9,25 @@ from validators import SizeValidator, LuckValidator
 
 
 class BloomFilter:
+    """
+    Класс реализация Filter Blooms\n
+    BloomFilter:\n
+    class_attributes:
+        size: SizeValidator - Количество элементов в массиве\n
+        luck: LuckValidator - Вероятность ложного срабатывания
+    __attributes:
+        __bits: int - Счётчик занятых битов
+    attributes:
+        m: float - Объем данных\n
+        k: float - Количество хэш-функций\n
+        array: bitarray - Bit массив
+    methods:
+        _get_index(self, data: dict, i: int) -> int - Получение индекса массива\n
+        (static) get_data (data: dict) -> str - Создание хэш данных\n
+        add_item(self. data: dict) -> None - Добавление 1-иц в массив\n
+        is_contains(self, data: dict) -> bool - Проверка на принадлежность данных к массиву\n
+        reset_array(self) -> None - Очищение массива данных
+    """
     size = SizeValidator()
     luck = LuckValidator()
 
