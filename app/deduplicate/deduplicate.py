@@ -8,6 +8,7 @@ from typing import Optional
 
 from core import settings, log
 from db.orm import get_connection
+from bloom_filter import BloomFilter
 
 
 class Deduplicate:
@@ -35,6 +36,7 @@ class Deduplicate:
         __save_to_redis() -> None - Сохранение данных в redis (сохранение хэша)\n
         __save_to_db() -> None - Сохранение данных в бд (Clickhouse)\n
     """
+    BLOOM = BloomFilter(10_000_000, 0.01)
     REDIS_TTL = 60
     REDIS_CONNECT = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
     DB_CONNECT = get_connection()
@@ -46,7 +48,19 @@ class Deduplicate:
         self.data: dict = data
 
     def run(self) -> Optional[bool]:
-        log.info_message('Начинается проверка на дублика')
+        log.info_message('Начинается проверка на дубликат')
+
+        try:
+            log.info_message('Начинается проверка внутри bloom')
+            if self.BLOOM.is_contains(self.data):
+                return False
+
+            self.BLOOM.add_item(self.data)
+            log.info_message('Проверка в bloom\'е завершилась успешно')
+        except Exception as e:
+            log.error_message(f'Исключение во время работы BloomFilter - {e}')
+            return
+
         try:
             log.info_message('Создание хэша данных')
             self.__get_hash()
