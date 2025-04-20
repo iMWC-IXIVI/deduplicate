@@ -15,7 +15,7 @@ class BloomFilter:
         self.luck = luck
         self.m = -((self.size * log(self.luck)) / (log(2) ** 2))
         self.k = (self.m / self.size) * log(2)
-        self.array = bitarray(self.size)
+        self.array = bitarray(ceil(self.m))
 
     def add_item(self, data: str):
         for i in range(ceil(self.k)):
