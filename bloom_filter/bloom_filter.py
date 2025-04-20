@@ -1,3 +1,5 @@
+import datetime
+
 from hashlib import blake2s
 from math import log, ceil
 
@@ -16,11 +18,17 @@ class BloomFilter:
         self.m = -((self.size * log(self.luck)) / (log(2) ** 2))
         self.k = (self.m / self.size) * log(2)
         self.array = bitarray(ceil(self.m))
+        self.__bits = 0
 
     def add_item(self, data: str):
         for i in range(ceil(self.k)):
             index = self._get_index(data, i)
-            self.array[index] = 1
+            if not self.array[index]:
+                self.array[index] = 1
+                self.__bits += 1
+
+        if self.__bits / ceil(self.m) > 0.8:
+            self.reset_array()
 
     def _get_index(self, data: str, i: int):
         hash_value = blake2s((data + str(i)).encode()).digest()
@@ -32,3 +40,7 @@ class BloomFilter:
             if not self.array[index]:
                 return False
         return True
+
+    def reset_array(self):
+        self.array = bitarray(ceil(self.m))
+        self.__bits = 0
