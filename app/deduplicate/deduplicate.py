@@ -16,6 +16,7 @@ class Deduplicate:
     Класс для дедубликации данных\n
     Deduplicate:\n
     class_attributes:
+        BLOOM - Фильтр Блума\n
         REDIS_TTL - Время жизни данных внутри redis\n
         REDIS_CONNECT - Подключение к redis\n
         DB_CONNECT - Подключение к бд (Clickhouse)\n
