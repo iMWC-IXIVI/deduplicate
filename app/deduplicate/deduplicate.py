@@ -55,8 +55,6 @@ class Deduplicate:
             log.info_message('Начинается проверка внутри bloom')
             if self.BLOOM.is_contains(self.data):
                 return False
-
-            self.BLOOM.add_item(self.data)
             log.info_message('Проверка в bloom\'е завершилась успешно')
         except Exception as e:
             log.error_message(f'Исключение во время работы BloomFilter - {e}')
@@ -88,6 +86,14 @@ class Deduplicate:
             log.info_message('Проверка успешно пройдена')
         except Exception as e:
             log.error_message(f'Исключение во время проверки внутри бд clickhouse - {e}')
+            return
+
+        try:
+            log.info_message('Начинается сохранение данных в bloom filter')
+            self.BLOOM.add_item(self.data)
+            log.info_message('Сохранение данных в bloom filter прошла успешно')
+        except Exception as e:
+            log.error_message(f'Исключение во время сохранения данных в bloom filter - {e}')
             return
 
         try:
