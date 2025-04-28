@@ -22,6 +22,6 @@ app.conf.enable_utc = False
 app.conf.beat_schedule = {
     'backup_data': {
         'task': 'celery_app.beat.backup_data.backup_data',
-        'schedule': crontab(day_of_week=1)
+        'schedule': crontab(hour=0, minute=0, day_of_week=1)
     },
 }
